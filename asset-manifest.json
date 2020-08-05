@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/mock-recent-changes/static/css/main.5f361e03.chunk.css",
+    "main.js": "/mock-recent-changes/static/js/main.9f29ac57.chunk.js",
+    "main.js.map": "/mock-recent-changes/static/js/main.9f29ac57.chunk.js.map",
+    "runtime-main.js": "/mock-recent-changes/static/js/runtime-main.776d3229.js",
+    "runtime-main.js.map": "/mock-recent-changes/static/js/runtime-main.776d3229.js.map",
+    "static/js/2.37f6a2f0.chunk.js": "/mock-recent-changes/static/js/2.37f6a2f0.chunk.js",
+    "static/js/2.37f6a2f0.chunk.js.map": "/mock-recent-changes/static/js/2.37f6a2f0.chunk.js.map",
+    "index.html": "/mock-recent-changes/index.html",
+    "precache-manifest.44842fb2741d10f7df71bcbce2d14fde.js": "/mock-recent-changes/precache-manifest.44842fb2741d10f7df71bcbce2d14fde.js",
+    "service-worker.js": "/mock-recent-changes/service-worker.js",
+    "static/css/main.5f361e03.chunk.css.map": "/mock-recent-changes/static/css/main.5f361e03.chunk.css.map",
+    "static/js/2.37f6a2f0.chunk.js.LICENSE.txt": "/mock-recent-changes/static/js/2.37f6a2f0.chunk.js.LICENSE.txt",
+    "static/media/logo.svg": "/mock-recent-changes/static/media/logo.5d5d9eef.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.776d3229.js",
+    "static/js/2.37f6a2f0.chunk.js",
+    "static/css/main.5f361e03.chunk.css",
+    "static/js/main.9f29ac57.chunk.js"
+  ]
+}
