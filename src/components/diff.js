@@ -20,7 +20,7 @@ class Diff extends Component {
       "<tr class='header'><td class='before' colspan='2'>Before</td><td class='after' colspan='2'>After</td></tr>";
     if (d === undefined) return <LinearProgress />;
     return (
-      <div class="tooltip">
+      <div class="diff">
         <strong>Revision ID: </strong>
         <a
           href={
