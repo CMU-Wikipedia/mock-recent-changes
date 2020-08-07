@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
+import "./App.scss";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { createMuiTheme, responsiveFontSizes } from "@material-ui/core/styles";
@@ -7,6 +8,8 @@ import { ThemeProvider } from "@material-ui/styles";
 import * as d3 from "d3";
 import data_sheet from "./data/data-moreinfo.csv";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
+import Diff from "./components/diff";
 
 const drawerWidth = 270;
 
@@ -128,26 +131,50 @@ class App extends Component {
   }
 
   render() {
+    let data = this.state.data || [];
     return (
-      <ThemeProvider theme={theme}>
-        <div className="App">
-          <Typography variant="subtitle1">Recent Changes</Typography>
-          <ul>
-            {this.state.data ? (
-              this.state.data.map((obj, index) => (
-                <li>
-                  <strong>{obj.title}</strong>{" "}
-                  {obj.timestamp.toLocaleTimeString()} ({obj.size}) . .{" "}
-                  {obj.username} . .{" "}
-                  <em dangerouslySetInnerHTML={{ __html: obj.comment }} />
-                </li>
-              ))
-            ) : (
-              <LinearProgress />
-            )}
-          </ul>
-        </div>
-      </ThemeProvider>
+      <BrowserRouter basename={process.env.PUBLIC_URL + "/"}>
+        <ThemeProvider theme={theme}>
+          <div className="App">
+            <Link to="/">
+              <Typography variant="subtitle1">Recent Changes</Typography>
+            </Link>
+
+            <Switch>
+              {data && data !== undefined && (
+                <Route
+                  path="/d/:revId"
+                  render={({ match }) => (
+                    <Diff
+                      revision={data.find(
+                        (e) => e.rev_id === parseInt(match.params.revId)
+                      )}
+                    />
+                  )}
+                />
+              )}
+
+              <Route path="/">
+                <ul>
+                  {this.state.data ? (
+                    this.state.data.map((obj, index) => (
+                      <li>
+                        <Link to={"/d/" + obj.rev_id}>Diff</Link> -{" "}
+                        <strong>{obj.title}</strong>{" "}
+                        {obj.timestamp.toLocaleTimeString()} ({obj.size}) . .{" "}
+                        {obj.username} . .{" "}
+                        <em dangerouslySetInnerHTML={{ __html: obj.comment }} />
+                      </li>
+                    ))
+                  ) : (
+                    <LinearProgress />
+                  )}
+                </ul>
+              </Route>
+            </Switch>
+          </div>
+        </ThemeProvider>
+      </BrowserRouter>
     );
   }
 }
