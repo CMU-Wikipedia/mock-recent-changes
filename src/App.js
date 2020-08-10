@@ -10,6 +10,9 @@ import data_sheet from "./data/data-moreinfo.csv";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
 import Diff from "./components/diff";
+import Filters from "./components/filters";
+import axios from "axios";
+import { keys } from "d3";
 
 const drawerWidth = 270;
 
@@ -103,9 +106,65 @@ const useStyles = makeStyles((theme) => ({
 class App extends Component {
   constructor(props) {
     super(props);
+    this.toggle = this.toggle.bind(this);
     this.state = {
-      data: null,
+      all_data: null,
+      filtered: null,
+      thresholds: {
+        damaging: {
+          likelygood: { min: 0, max: "maximum recall @ precision >= 0.995" },
+          maybebad: { min: "maximum filter_rate @ recall >= 0.9", max: 1 },
+          likelybad: { min: "maximum recall @ precision >= 0.6", max: 1 },
+          verylikelybad: { min: "maximum recall @ precision >= 0.9", max: 1 },
+        },
+        goodfaith: {
+          likelygood: { min: "maximum recall @ precision >= 0.995", max: 1 },
+          maybebad: { min: 0, max: "maximum filter_rate @ recall >= 0.9" },
+          likelybad: { min: 0, max: "maximum recall @ precision >= 0.6" },
+        },
+      },
+      activeFilters: new Set(),
+      checkedFilters: {
+        damaging: {
+          likelygood: false,
+          maybebad: false,
+          likelybad: false,
+          verylikelybad: false,
+        },
+        goodfaith: {
+          likelygood: false,
+          maybebad: false,
+          likelybad: false,
+        },
+      },
     };
+  }
+
+  getFilterThresholds() {
+    var thresholds = this.state.thresholds;
+    for (const model in thresholds) {
+      for (const filter in thresholds[model]) {
+        for (const bound in thresholds[model][filter]) {
+          if (typeof thresholds[model][filter][bound] === "string")
+            axios
+              .get(
+                "https://ores.wikimedia.org/v3/scores/enwiki/?models=" +
+                  model +
+                  '&model_info=statistics.thresholds.true."' +
+                  thresholds[model][filter][bound] +
+                  '"'
+              )
+              .then((res) => {
+                thresholds[model][filter][bound] = parseFloat(
+                  res.data.enwiki.models[
+                    model
+                  ].statistics.thresholds.true[0].threshold.toFixed(3)
+                );
+              });
+        }
+      }
+    }
+    this.setState({ thresholds: thresholds });
   }
 
   componentDidMount() {
@@ -126,12 +185,55 @@ class App extends Component {
         diff: d.diff,
       };
     }).then((data) => {
-      this.setState({ data: data });
+      this.setState({
+        all_data: data,
+        filtered: data,
+      });
+    });
+
+    this.getFilterThresholds();
+  }
+
+  toggle(model, range) {
+    var checks = this.state.checkedFilters;
+    var data = this.state.all_data;
+    console.log("toggle", checks, data);
+    if (!data) return;
+
+    checks[model][range] = !checks[model][range];
+    this.setState({
+      checkedFilters: checks,
+      filtered: this.filterData(data, checks),
     });
   }
 
+  passFilter(d, model, range) {
+    const confidence =
+      model === "damaging" ? d.confidence_damage : d.confidence_faith;
+    return (
+      this.state.thresholds[model][range].min <= confidence &&
+      this.state.thresholds[model][range].max >= confidence
+    );
+  }
+
+  filterData(data, checks) {
+    var newData = [];
+    data.forEach((d) => {
+      var valid = true;
+      Object.keys(checks).forEach((model) => {
+        Object.keys(checks[model]).forEach((range) => {
+          valid = valid && this.passFilter(d, model, range);
+        });
+      });
+      if (valid) newData.push(d);
+    });
+    return newData;
+  }
+
   render() {
-    let data = this.state.data || [];
+    let data = this.state.filtered || [];
+    let thresholds = this.state.thresholds || {};
+    let checks = this.state.checkedFilters || {};
     return (
       <BrowserRouter basename={process.env.PUBLIC_URL + "/"}>
         <ThemeProvider theme={theme}>
@@ -143,11 +245,11 @@ class App extends Component {
             <Switch>
               {data && data !== undefined && (
                 <Route
-                  path="/d/:revId"
+                  path="/d/:id"
                   render={({ match }) => (
                     <Diff
                       revision={data.find(
-                        (e) => e.rev_id === parseInt(match.params.revId)
+                        (e) => e.rev_id === parseInt(match.params.id)
                       )}
                     />
                   )}
@@ -155,10 +257,16 @@ class App extends Component {
               )}
 
               <Route path="/">
+                <Filters checked={checks} />
+                <pre>{JSON.stringify(thresholds, null, 2)}</pre>
                 <ul>
-                  {this.state.data ? (
-                    this.state.data.map((obj, index) => (
+                  {data ? (
+                    data.map((obj, index) => (
                       <li>
+                        <strong>
+                          {obj.confidence_damage.toFixed(3)} /{" "}
+                          {obj.confidence_faith.toFixed(3)}
+                        </strong>
                         <Link to={"/d/" + obj.rev_id}>Diff</Link> -{" "}
                         <strong>{obj.title}</strong>{" "}
                         {obj.timestamp.toLocaleTimeString()} ({obj.size}) . .{" "}
