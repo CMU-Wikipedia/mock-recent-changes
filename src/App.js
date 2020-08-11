@@ -3,6 +3,11 @@ import "./App.css";
 import "./App.scss";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
+import FormLabel from "@material-ui/core/FormLabel";
+import FormControl from "@material-ui/core/FormControl";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 import { createMuiTheme, responsiveFontSizes } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import * as d3 from "d3";
@@ -10,7 +15,6 @@ import data_sheet from "./data/data-moreinfo.csv";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
 import Diff from "./components/diff";
-import Filters from "./components/filters";
 import axios from "axios";
 import { keys } from "d3";
 
@@ -123,8 +127,7 @@ class App extends Component {
           likelybad: { min: 0, max: "maximum recall @ precision >= 0.6" },
         },
       },
-      activeFilters: new Set(),
-      checkedFilters: {
+      checked: {
         damaging: {
           likelygood: false,
           maybebad: false,
@@ -188,6 +191,19 @@ class App extends Component {
       this.setState({
         all_data: data,
         filtered: data,
+        checked: {
+          damaging: {
+            likelygood: false,
+            maybebad: false,
+            likelybad: false,
+            verylikelybad: false,
+          },
+          goodfaith: {
+            likelygood: false,
+            maybebad: false,
+            likelybad: false,
+          },
+        },
       });
     });
 
@@ -195,45 +211,15 @@ class App extends Component {
   }
 
   toggle(model, range) {
-    var checks = this.state.checkedFilters;
-    var data = this.state.all_data;
-    console.log("toggle", checks, data);
-    if (!data) return;
-
+    var checks = this.state.checked;
     checks[model][range] = !checks[model][range];
-    this.setState({
-      checkedFilters: checks,
-      filtered: this.filterData(data, checks),
-    });
-  }
-
-  passFilter(d, model, range) {
-    const confidence =
-      model === "damaging" ? d.confidence_damage : d.confidence_faith;
-    return (
-      this.state.thresholds[model][range].min <= confidence &&
-      this.state.thresholds[model][range].max >= confidence
-    );
-  }
-
-  filterData(data, checks) {
-    var newData = [];
-    data.forEach((d) => {
-      var valid = true;
-      Object.keys(checks).forEach((model) => {
-        Object.keys(checks[model]).forEach((range) => {
-          valid = valid && this.passFilter(d, model, range);
-        });
-      });
-      if (valid) newData.push(d);
-    });
-    return newData;
+    this.state.checked = checks;
   }
 
   render() {
     let data = this.state.filtered || [];
     let thresholds = this.state.thresholds || {};
-    let checks = this.state.checkedFilters || {};
+    let checks = this.state.checked || {};
     return (
       <BrowserRouter basename={process.env.PUBLIC_URL + "/"}>
         <ThemeProvider theme={theme}>
@@ -257,8 +243,28 @@ class App extends Component {
               )}
 
               <Route path="/">
-                <Filters checked={checks} />
-                <pre>{JSON.stringify(thresholds, null, 2)}</pre>
+                <FormControl style={{ flexDirection: "row" }}>
+                  {Object.keys(checks).map((model) => (
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <FormLabel>{model}</FormLabel>
+                      <FormGroup style={{ flexDirection: "row" }}>
+                        {Object.keys(checks[model]).map((range) => (
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                // checked={checks[model][range]}
+                                onClick={this.toggle(model, range)}
+                              />
+                            }
+                            label={range}
+                          />
+                        ))}
+                      </FormGroup>
+                    </div>
+                  ))}
+                </FormControl>
+
+                <pre>{JSON.stringify(checks, null, 2)}</pre>
                 <ul>
                   {data ? (
                     data.map((obj, index) => (
