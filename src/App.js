@@ -1,22 +1,36 @@
 import React, { Component } from "react";
+import * as d3 from "d3";
+import axios from "axios";
 import "./App.css";
 import "./App.scss";
-import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import FormLabel from "@material-ui/core/FormLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import { createMuiTheme, responsiveFontSizes } from "@material-ui/core/styles";
-import { ThemeProvider } from "@material-ui/styles";
-import * as d3 from "d3";
 import data_sheet from "./data/data-moreinfo.csv";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
 import Diff from "./components/diff";
-import axios from "axios";
-import { keys } from "d3";
+import DataDisplay from "./components/dataDisplay";
+import { ThemeProvider } from "@material-ui/styles";
+
+import {
+  makeStyles,
+  Typography,
+  FormLabel,
+  FormControl,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  LinearProgress,
+  createMuiTheme,
+  responsiveFontSizes,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@material-ui/core";
+
+import {
+  BrowserRouter,
+  HashRouter,
+  Route,
+  Link,
+  Switch,
+} from "react-router-dom";
 
 const drawerWidth = 270;
 
@@ -112,53 +126,73 @@ class App extends Component {
     super(props);
     this.toggle = this.toggle.bind(this);
     this.state = {
-      all_data: null,
-      filtered: null,
-      thresholds: {
+      data: null,
+      thresholdsFound: false,
+      filters: {
         damaging: {
-          likelygood: { min: 0, max: "maximum recall @ precision >= 0.995" },
-          maybebad: { min: "maximum filter_rate @ recall >= 0.9", max: 1 },
-          likelybad: { min: "maximum recall @ precision >= 0.6", max: 1 },
-          verylikelybad: { min: "maximum recall @ precision >= 0.9", max: 1 },
+          likelygood: {
+            thresholds: { min: 0, max: "maximum recall @ precision >= 0.995" },
+            checked: false,
+            highlight: "#ffffff",
+          },
+          maybebad: {
+            thresholds: { min: "maximum filter_rate @ recall >= 0.9", max: 1 },
+            checked: false,
+            highlight: "#ffffff",
+          },
+          likelybad: {
+            thresholds: { min: "maximum recall @ precision >= 0.6", max: 1 },
+            checked: false,
+            highlight: "#ffffff",
+          },
+          verylikelybad: {
+            thresholds: { min: "maximum recall @ precision >= 0.9", max: 1 },
+            checked: false,
+            highlight: "#ffffff",
+          },
         },
         goodfaith: {
-          likelygood: { min: "maximum recall @ precision >= 0.995", max: 1 },
-          maybebad: { min: 0, max: "maximum filter_rate @ recall >= 0.9" },
-          likelybad: { min: 0, max: "maximum recall @ precision >= 0.6" },
-        },
-      },
-      checked: {
-        damaging: {
-          likelygood: false,
-          maybebad: false,
-          likelybad: false,
-          verylikelybad: false,
-        },
-        goodfaith: {
-          likelygood: false,
-          maybebad: false,
-          likelybad: false,
+          likelygood: {
+            thresholds: { min: "maximum recall @ precision >= 0.995", max: 1 },
+            checked: false,
+            highlight: "#ffffff",
+          },
+          maybebad: {
+            thresholds: { min: 0, max: "maximum filter_rate @ recall >= 0.9" },
+            checked: false,
+            highlight: "#ffffff",
+          },
+          likelybad: {
+            thresholds: { min: 0, max: "maximum recall @ precision >= 0.6" },
+            checked: false,
+            highlight: "#ffffff",
+          },
+          verylikelybad: {
+            thresholds: { min: 0, max: 0 },
+            checked: false,
+            highlight: "#ffffff",
+          },
         },
       },
     };
   }
 
   getFilterThresholds() {
-    var thresholds = this.state.thresholds;
-    for (const model in thresholds) {
-      for (const filter in thresholds[model]) {
-        for (const bound in thresholds[model][filter]) {
-          if (typeof thresholds[model][filter][bound] === "string")
+    var filters = this.state.filters;
+    for (const model in filters) {
+      for (const filter in filters[model]) {
+        for (const bound in filters[model][filter].thresholds) {
+          if (typeof filters[model][filter].thresholds[bound] === "string")
             axios
               .get(
                 "https://ores.wikimedia.org/v3/scores/enwiki/?models=" +
                   model +
                   '&model_info=statistics.thresholds.true."' +
-                  thresholds[model][filter][bound] +
+                  filters[model][filter].thresholds[bound] +
                   '"'
               )
               .then((res) => {
-                thresholds[model][filter][bound] = parseFloat(
+                filters[model][filter].thresholds[bound] = parseFloat(
                   res.data.enwiki.models[
                     model
                   ].statistics.thresholds.true[0].threshold.toFixed(3)
@@ -167,10 +201,11 @@ class App extends Component {
         }
       }
     }
-    this.setState({ thresholds: thresholds });
+    this.setState({ filters: filters, thresholdsFound: true });
   }
 
   componentDidMount() {
+    this.getFilterThresholds();
     d3.csv(data_sheet, (d) => {
       return {
         confidence_faith: +d.confidence_faith,
@@ -189,8 +224,7 @@ class App extends Component {
       };
     }).then((data) => {
       this.setState({
-        all_data: data,
-        filtered: data,
+        data: data,
         checked: {
           damaging: {
             likelygood: false,
@@ -206,20 +240,23 @@ class App extends Component {
         },
       });
     });
-
-    this.getFilterThresholds();
   }
 
   toggle(model, range) {
-    var checks = this.state.checked;
-    checks[model][range] = !checks[model][range];
-    this.state.checked = checks;
+    var filters = this.state.filters;
+    filters[model][range].checked = !filters[model][range].checked;
+    this.setState({ filters: filters });
+  }
+
+  changeColor(model, range, event) {
+    var filters = this.state.filters;
+    filters[model][range].highlight = event.target.value;
+    this.setState({ filters: filters });
   }
 
   render() {
-    let data = this.state.filtered || [];
-    let thresholds = this.state.thresholds || {};
-    let checks = this.state.checked || {};
+    let data = this.state.data || [];
+    let filters = this.state.filters || {};
     return (
       <BrowserRouter basename={process.env.PUBLIC_URL + "/"}>
         <ThemeProvider theme={theme}>
@@ -243,47 +280,60 @@ class App extends Component {
               )}
 
               <Route path="/">
-                <FormControl style={{ flexDirection: "row" }}>
-                  {Object.keys(checks).map((model) => (
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                      <FormLabel>{model}</FormLabel>
-                      <FormGroup style={{ flexDirection: "row" }}>
-                        {Object.keys(checks[model]).map((range) => (
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                // checked={checks[model][range]}
-                                onClick={this.toggle(model, range)}
+                {this.state.thresholdsFound ? (
+                  <FormControl style={{ flexDirection: "row" }}>
+                    {Object.keys(filters).map((model) => (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          width: "25vw",
+                        }}
+                      >
+                        <FormLabel>{model}</FormLabel>
+                        <FormGroup>
+                          {Object.keys(filters[model]).map((range) => (
+                            <div>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    onClick={() => this.toggle(model, range)}
+                                  />
+                                }
+                                label={range}
                               />
-                            }
-                            label={range}
-                          />
-                        ))}
-                      </FormGroup>
-                    </div>
-                  ))}
-                </FormControl>
+                              <FormControl>
+                                <Select
+                                  value={filters[model][range].highlight}
+                                  onChange={(event) =>
+                                    this.changeColor(model, range, event)
+                                  }
+                                >
+                                  {[
+                                    "#ffffff",
+                                    "#495cd0",
+                                    "#43b286",
+                                    "#f6d00e",
+                                    "#f06d1f",
+                                    "#ce2d37",
+                                  ].map((color) => (
+                                    <MenuItem value={color}>{color}</MenuItem>
+                                  ))}
+                                </Select>
+                              </FormControl>
+                            </div>
+                          ))}
+                        </FormGroup>
+                      </div>
+                    ))}
+                  </FormControl>
+                ) : (
+                  <LinearProgress />
+                )}
 
-                <pre>{JSON.stringify(checks, null, 2)}</pre>
-                <ul>
-                  {data ? (
-                    data.map((obj, index) => (
-                      <li>
-                        <strong>
-                          {obj.confidence_damage.toFixed(3)} /{" "}
-                          {obj.confidence_faith.toFixed(3)}
-                        </strong>
-                        <Link to={"/d/" + obj.rev_id}>Diff</Link> -{" "}
-                        <strong>{obj.title}</strong>{" "}
-                        {obj.timestamp.toLocaleTimeString()} ({obj.size}) . .{" "}
-                        {obj.username} . .{" "}
-                        <em dangerouslySetInnerHTML={{ __html: obj.comment }} />
-                      </li>
-                    ))
-                  ) : (
-                    <LinearProgress />
-                  )}
-                </ul>
+                {/* <pre>{JSON.stringify(filters, null, 2)}</pre> */}
+
+                <DataDisplay data={data} filters={filters} />
               </Route>
             </Switch>
           </div>
