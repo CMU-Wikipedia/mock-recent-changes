@@ -7,6 +7,7 @@ import data_sheet from "./data/data-moreinfo.csv";
 import Diff from "./components/diff";
 import DataDisplay from "./components/dataDisplay";
 import { ThemeProvider } from "@material-ui/styles";
+import Dot from "@material-ui/icons/FiberManualRecord";
 
 import {
   makeStyles,
@@ -173,6 +174,28 @@ class App extends Component {
             highlight: "#ffffff",
           },
         },
+        experience: {
+          anonymous: {
+            comparison: (d) => d.anonymous,
+            checked: false,
+            highlight: "#ffffff",
+          },
+          loggedIn: {
+            comparison: (d) => !d.anonymous,
+            checked: false,
+            highlight: "#ffffff",
+          },
+          newcomers: {
+            comparison: (d) => d.newcomer,
+            checked: false,
+            highlight: "#ffffff",
+          },
+          experienced: {
+            comparison: (d) => !d.newcomer,
+            checked: false,
+            highlight: "#ffffff",
+          },
+        },
       },
     };
   }
@@ -287,7 +310,7 @@ class App extends Component {
                         style={{
                           display: "flex",
                           flexDirection: "column",
-                          width: "25vw",
+                          width: 240,
                         }}
                       >
                         <FormLabel>{model}</FormLabel>
@@ -301,6 +324,7 @@ class App extends Component {
                                   />
                                 }
                                 label={range}
+                                style={{ width: 130 }}
                               />
                               <FormControl>
                                 <Select
@@ -308,6 +332,11 @@ class App extends Component {
                                   onChange={(event) =>
                                     this.changeColor(model, range, event)
                                   }
+                                  style={{
+                                    backgroundColor: "#f8f8f8",
+                                    width: 50,
+                                    alignItems: "center",
+                                  }}
                                 >
                                   {[
                                     "#ffffff",
@@ -317,7 +346,9 @@ class App extends Component {
                                     "#f06d1f",
                                     "#ce2d37",
                                   ].map((color) => (
-                                    <MenuItem value={color}>{color}</MenuItem>
+                                    <MenuItem value={color}>
+                                      <Dot style={{ fill: color }} />
+                                    </MenuItem>
                                   ))}
                                 </Select>
                               </FormControl>
@@ -330,9 +361,6 @@ class App extends Component {
                 ) : (
                   <LinearProgress />
                 )}
-
-                {/* <pre>{JSON.stringify(filters, null, 2)}</pre> */}
-
                 <DataDisplay data={data} filters={filters} />
               </Route>
             </Switch>

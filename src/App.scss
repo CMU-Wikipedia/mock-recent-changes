@@ -134,7 +134,6 @@
 
 .editLine {
   margin-bottom: 2px;
-  padding: 1px;
   list-style: none;
   display: flex;
   flex-flow: row nowrap;
@@ -144,9 +143,11 @@
     width: 3%;
     display: inline-flex;
     direction: rtl;
+    padding-right: 10px;
+    background-color: #fff;
 
     svg {
-      margin: 6px 1px;
+      margin: 6px 0px;
       padding: 0px 0px;
     }
   }
