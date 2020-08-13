@@ -1,9 +1,10 @@
+a {
+  color: #3777a5;
+}
+
 .diff {
   font-size: 15px;
-  background-color: #fff;
   display: block;
-  padding: 15px 0px;
-  border-bottom: 1px solid lightgrey;
   overflow: auto;
   overflow-x: hidden;
   /* Hide scrollbar for IE, Edge and Firefox */
@@ -16,7 +17,8 @@
 
   .row {
     width: 100%;
-    display: inline-flex;
+    display: flex;
+    flex-direction: row;
     margin-bottom: 0px;
 
     div {
@@ -133,7 +135,7 @@
 }
 
 .editLine {
-  margin-bottom: 2px;
+  margin: 5px 0px;
   list-style: none;
   display: flex;
   flex-flow: row nowrap;
@@ -153,6 +155,49 @@
   }
 
   li {
-    width: 97%;
+    width: 94%;
   }
+}
+
+.filter.MuiFormControl-root {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+
+  .modelGroup {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+
+    .filterItem {
+      margin-bottom: 5px;
+      display: flex;
+      flex-grow: 1;
+      flex-direction: row nowrap;
+
+      .filterBox {
+        flex-grow: 1;
+      }
+
+      .highlightBox {
+        margin-top: 0px;
+
+        svg {
+          height: 22px;
+          width: 22px;
+        }
+      }
+    }
+  }
+}
+
+.box {
+  padding: 20px;
+  background-color: white;
+  border: 3px solid lightgrey;
+  margin-bottom: 20px;
+}
+
+.MuiPaper-root.MuiMenu-paper.MuiPopover-paper {
+  background-color: #f0f0f0;
 }

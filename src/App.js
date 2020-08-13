@@ -8,6 +8,7 @@ import Diff from "./components/diff";
 import DataDisplay from "./components/dataDisplay";
 import { ThemeProvider } from "@material-ui/styles";
 import Dot from "@material-ui/icons/FiberManualRecord";
+import Highlight from "@material-ui/icons/Colorize";
 
 import {
   makeStyles,
@@ -33,8 +34,6 @@ import {
   Switch,
 } from "react-router-dom";
 
-const drawerWidth = 270;
-
 let theme = createMuiTheme({
   typography: {
     root: {
@@ -47,8 +46,8 @@ let theme = createMuiTheme({
     },
     subtitle2: {
       fontSize: "12px",
-      marginTop: "10px",
-      color: "#B0B0B0",
+      marginBottom: "10px",
+      color: "#C57619",
       fontWeight: "bold",
       textTransform: "uppercase",
       textAlign: "left",
@@ -59,12 +58,12 @@ let theme = createMuiTheme({
       textAlign: "left",
     },
     body1: {
-      // textAlign: 'left',
-      fontSize: "14px",
+      textAlign: "left",
+      fontSize: 14,
     },
     body2: {
       textAlign: "left",
-      fontSize: "14px",
+      fontSize: 12,
     },
     button: {
       fontStyle: "italic",
@@ -86,21 +85,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     // fontFamily: 'Noto Sans, sans-serif',
   },
-  appBar: {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: drawerWidth,
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-    textAlign: "center",
-    position: "relative",
-  },
-  drawerPaper: {
-    width: drawerWidth,
-    paddingTop: "35px",
-    paddingBottom: "35px",
-  },
   paper: {
     textAlign: "left",
     padding: "20px 20px",
@@ -113,13 +97,6 @@ const useStyles = makeStyles((theme) => ({
   toolbar: {
     padding: theme.spacing(2),
   },
-  content: {
-    width: `calc(100% - ${drawerWidth}px)`,
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: "1.5vh",
-    height: "100vh",
-  },
 }));
 
 class App extends Component {
@@ -129,71 +106,107 @@ class App extends Component {
     this.state = {
       data: null,
       thresholdsFound: false,
+      titles: {
+        damaging: "Edit quality predictions (damaging)",
+        goodfaith: "User intent predictions (good-faith)",
+        experience: "User registration and experience",
+      },
       filters: {
         damaging: {
           likelygood: {
             thresholds: { min: 0, max: "maximum recall @ precision >= 0.995" },
             checked: false,
-            highlight: "#ffffff",
+            highlight: null,
+            title: "Very likely good",
+            description:
+              "Highly accurate at finding almost all problem-free edits",
           },
           maybebad: {
             thresholds: { min: "maximum filter_rate @ recall >= 0.9", max: 1 },
             checked: false,
-            highlight: "#ffffff",
+            highlight: null,
+            title: "May have problems",
+            description:
+              "Finds most flawed or damaging edits, but with lower accuracy",
           },
           likelybad: {
             thresholds: { min: "maximum recall @ precision >= 0.6", max: 1 },
             checked: false,
-            highlight: "#ffffff",
+            highlight: null,
+            title: "Likely have problems",
+            description:
+              "With medium accuracy, finds and intermediate fraction of problem edits",
           },
           verylikelybad: {
             thresholds: { min: "maximum recall @ precision >= 0.9", max: 1 },
             checked: false,
-            highlight: "#ffffff",
+            highlight: null,
+            title: "Very likely have problems",
+            description:
+              "Very accurate at finding the most obviously flawed or damaging edits",
           },
         },
         goodfaith: {
           likelygood: {
             thresholds: { min: "maximum recall @ precision >= 0.995", max: 1 },
             checked: false,
-            highlight: "#ffffff",
+            highlight: null,
+            title: "Very likely good faith",
+            description:
+              "Highly accurate at finding almost all good-faith edits",
           },
           maybebad: {
             thresholds: { min: 0, max: "maximum filter_rate @ recall >= 0.9" },
             checked: false,
-            highlight: "#ffffff",
+            highlight: null,
+            title: "May be bad faith",
+            description: "Finds most bad-faith edits but with a lower accuracy",
           },
           likelybad: {
             thresholds: { min: 0, max: "maximum recall @ precision >= 0.6" },
             checked: false,
-            highlight: "#ffffff",
+            highlight: null,
+            title: "Likely bad faith",
+            description:
+              "With medium accuracy, finds an intermediate fraction of bad-faith edits",
           },
           verylikelybad: {
             thresholds: { min: 0, max: 0 },
             checked: false,
-            highlight: "#ffffff",
+            highlight: null,
+            title: "Very likely bad faith",
+            description:
+              "Very accurate at finding the most obvious bad-faith edits",
           },
         },
         experience: {
           anonymous: {
             comparison: (d) => d.anonymous,
             checked: false,
-            highlight: "#ffffff",
+            highlight: null,
+            title: "Anonymous",
+            description: "Editors who aren't logged in",
           },
           loggedIn: {
             comparison: (d) => !d.anonymous,
             checked: false,
-            highlight: "#ffffff",
+            highlight: null,
+            title: "Registered",
+            description: "Logged-in editors",
           },
           newcomers: {
             comparison: (d) => d.newcomer,
             checked: false,
-            highlight: "#ffffff",
+            highlight: null,
+            title: "Newcomers",
+            description: "Editors with less than 8 years of experience",
           },
           experienced: {
             comparison: (d) => !d.newcomer,
             checked: false,
-            highlight: "#ffffff",
+            highlight: null,
+            title: "Experienced users",
+            description: "Editors with more than 8 years of experience",
           },
         },
       },
@@ -245,24 +258,7 @@ class App extends Component {
         comment: d.parsed_comment,
         diff: d.diff,
       };
-    }).then((data) => {
-      this.setState({
-        data: data,
-        checked: {
-          damaging: {
-            likelygood: false,
-            maybebad: false,
-            likelybad: false,
-            verylikelybad: false,
-          },
-          goodfaith: {
-            likelygood: false,
-            maybebad: false,
-            likelybad: false,
-          },
-        },
-      });
-    });
+    }).then((data) => this.setState({ data: data }));
   }
 
   toggle(model, range) {
@@ -284,9 +280,14 @@ class App extends Component {
       <BrowserRouter basename={process.env.PUBLIC_URL + "/"}>
         <ThemeProvider theme={theme}>
           <div className="App">
-            <Link to="/">
-              <Typography variant="subtitle1">Recent Changes</Typography>
-            </Link>
+            <div
+              className="box"
+              style={{ marginTop: "-2em", borderTop: "none" }}
+            >
+              <Link to="/">
+                <Typography variant="subtitle1">Recent Changes</Typography>
+              </Link>
+            </div>
 
             <Switch>
               {data && data !== undefined && (
@@ -304,54 +305,62 @@ class App extends Component {
 
               <Route path="/">
                 {this.state.thresholdsFound ? (
-                  <FormControl style={{ flexDirection: "row" }}>
+                  <FormControl className="filter">
                     {Object.keys(filters).map((model) => (
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          width: 240,
-                        }}
-                      >
-                        <FormLabel>{model}</FormLabel>
+                      <div className="modelGroup box">
+                        <FormLabel>
+                          <Typography variant="subtitle2">
+                            {this.state.titles[model]}
+                          </Typography>
+                        </FormLabel>
                         <FormGroup>
                           {Object.keys(filters[model]).map((range) => (
-                            <div>
+                            <div className="filterItem">
                               <FormControlLabel
+                                className="filterBox"
                                 control={
                                   <Checkbox
                                     onClick={() => this.toggle(model, range)}
+                                    value={filters[model][range].checked}
                                   />
                                 }
-                                label={range}
-                                style={{ width: 130 }}
+                                label={
+                                  <div>
+                                    <Typography variant="h6">
+                                      {filters[model][range].title}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                      {filters[model][range].description}
+                                    </Typography>
+                                  </div>
+                                }
                               />
-                              <FormControl>
-                                <Select
-                                  value={filters[model][range].highlight}
-                                  onChange={(event) =>
-                                    this.changeColor(model, range, event)
-                                  }
-                                  style={{
-                                    backgroundColor: "#f8f8f8",
-                                    width: 50,
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  {[
-                                    "#ffffff",
-                                    "#495cd0",
-                                    "#43b286",
-                                    "#f6d00e",
-                                    "#f06d1f",
-                                    "#ce2d37",
-                                  ].map((color) => (
-                                    <MenuItem value={color}>
-                                      <Dot style={{ fill: color }} />
-                                    </MenuItem>
-                                  ))}
-                                </Select>
-                              </FormControl>
+                              <Select
+                                className="highlightBox"
+                                value={filters[model][range].highlight}
+                                onChange={(event) =>
+                                  this.changeColor(model, range, event)
+                                }
+                                displayEmpty="true"
+                                renderValue={(value) => {
+                                  if (value)
+                                    return <Dot style={{ fill: value }} />;
+                                  else return <Highlight />;
+                                }}
+                              >
+                                {[
+                                  null,
+                                  "#495cd0",
+                                  "#43b286",
+                                  "#f6d00e",
+                                  "#f06d1f",
+                                  "#ce2d37",
+                                ].map((color) => (
+                                  <MenuItem value={color}>
+                                    <Dot style={{ fill: color || "#fff" }} />
+                                  </MenuItem>
+                                ))}
+                              </Select>
                             </div>
                           ))}
                         </FormGroup>

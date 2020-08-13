@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress, Typography } from "@material-ui/core";
 import Dot from "@material-ui/icons/FiberManualRecord";
 
 class DataDisplay extends Component {
@@ -10,9 +10,9 @@ class DataDisplay extends Component {
 
   renderItem(d) {
     if (!this.props.filters) return;
-    var show = false;
+    var show = true;
     var filterCount = 0;
-    var colors = [];
+    var colors = new Set();
     var color = "#ffffff";
 
     const models = Object.keys(this.props.filters);
@@ -33,40 +33,38 @@ class DataDisplay extends Component {
 
         if (f.checked) {
           filterCount++;
-          show = show || pass;
+          show = show && pass;
         }
 
-        if (pass && col !== "#ffffff") {
+        if (pass && col) {
           color = col;
-          colors.push(col);
+          colors.add(col);
         }
       }
     }
-
-    if (filterCount === 0) show = true;
 
     if (show)
       return (
         <div className="editLine">
           <div className="dots">
-            {colors.map((c) => (
-              <Dot
-                fontSize="small"
-                style={{ fill: c, height: 10, width: 10 }}
-              />
+            {Array.from(colors).map((c) => (
+              <Dot style={{ fill: c, height: 10, width: 10 }} />
             ))}
           </div>
 
-          <li style={{ backgroundColor: color + "44" }}>
-            <strong>
-              {d.confidence_damage.toFixed(3)} / {d.confidence_faith.toFixed(3)}
+          <Typography
+            variant="body1"
+            component="li"
+            style={{ backgroundColor: (color || "#ffffff") + "44" }}
+          >
+            (<Link to={"/d/" + d.rev_id}>diff</Link>) -{" "}
+            <strong>{d.title}</strong>
+            <em> by {d.username} </em>{" "}
+            <strong style={{ color: d.size >= 0 ? "green" : "red" }}>
+              ({d.size.toLocaleString("en-US", { signDisplay: "always" })})
             </strong>{" "}
-            <Link to={"/d/" + d.rev_id}>Diff</Link> - <strong>{d.title}</strong>{" "}
-            {d.timestamp.toLocaleTimeString()}{" "}
-            <strong style={{ color: d.size ? "green" : "" }}>({d.size})</strong>{" "}
-            . . {d.username} . .{" "}
-            <em dangerouslySetInnerHTML={{ __html: d.comment }} />
-          </li>
+            <span dangerouslySetInnerHTML={{ __html: d.comment }} />
+          </Typography>
         </div>
       );
     else return <li style={{ display: "none" }} />;
@@ -74,7 +72,7 @@ class DataDisplay extends Component {
 
   render() {
     return (
-      <div style={{ paddingTop: 20 }}>
+      <div className="box">
         {this.props.data ? (
           this.props.data.map((obj) => this.renderItem(obj))
         ) : (

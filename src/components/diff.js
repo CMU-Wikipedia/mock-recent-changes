@@ -21,40 +21,46 @@ class Diff extends Component {
     if (d === undefined) return <LinearProgress />;
     return (
       <div class="diff">
-        <strong>Revision ID: </strong>
-        <a
-          href={
-            "https://en.wikipedia.org/w/index.php?title=&diff=prev&oldid=" +
-            d.rev_id
-          }
-          target="_blank"
-        >
-          {d.rev_id}
-        </a>
-        <div class="row">
-          <div>
-            <strong>Article Title: </strong>
-            {d.title}
+        <div class="box">
+          <strong>Revision ID: </strong>
+          <a
+            href={
+              "https://en.wikipedia.org/w/index.php?title=&diff=prev&oldid=" +
+              d.rev_id
+            }
+            target="_blank"
+          >
+            {d.rev_id}
+          </a>
+          <div class="row">
+            <div>
+              <strong>Article Title: </strong>
+              {d.title}
+            </div>
           </div>
+          <h5>
+            Edited by{" "}
+            {this.ValidateIPaddress(d.username) ? "Anonymous" : d.username} at{" "}
+            {d.timestamp.toLocaleTimeString()} on{" "}
+            {d.timestamp.toLocaleDateString(undefined, {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </h5>
+          {d.comment !== "" && (
+            <div style={{ marginBottom: 0 }}>
+              <strong>Comment from Editor:</strong>
+              <p dangerouslySetInnerHTML={{ __html: d.comment }} />
+            </div>
+          )}
         </div>
-        <h5>
-          Edited by{" "}
-          {this.ValidateIPaddress(d.username) ? "Anonymous" : d.username} at{" "}
-          {d.timestamp.toLocaleTimeString()} on{" "}
-          {d.timestamp.toLocaleDateString(undefined, {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </h5>
-        {d.comment !== "" && (
-          <div>
-            <strong>Comment from Editor:</strong>
-            <p dangerouslySetInnerHTML={{ __html: d.comment }} />
-          </div>
-        )}
-        <table dangerouslySetInnerHTML={{ __html: h + d.diff }} />
+
+        <table
+          className="box"
+          dangerouslySetInnerHTML={{ __html: h + d.diff }}
+        />
       </div>
     );
   }
