@@ -6,6 +6,7 @@ import "./App.scss";
 import data_sheet from "./data/data-moreinfo.csv";
 import Diff from "./components/diff";
 import DataDisplay from "./components/dataDisplay";
+import Contribs from "./components/userContribs";
 import { ThemeProvider } from "@material-ui/styles";
 import Dot from "@material-ui/icons/FiberManualRecord";
 import Highlight from "@material-ui/icons/Colorize";
@@ -302,6 +303,17 @@ class App extends Component {
                   )}
                 />
               )}
+
+              <Route
+                path="/c/:id"
+                render={({ match }) => (
+                  <Contribs
+                    revision={data.find(
+                      (e) => e.rev_id === parseInt(match.params.id)
+                    )}
+                  />
+                )}
+              />
 
               <Route path="/">
                 {this.state.thresholdsFound ? (

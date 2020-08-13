@@ -156,6 +156,9 @@ a {
 
   li {
     width: 94%;
+    > *:not(a) {
+      margin-right: 10px;
+    }
   }
 }
 

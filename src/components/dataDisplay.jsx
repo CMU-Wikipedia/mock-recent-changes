@@ -9,9 +9,8 @@ class DataDisplay extends Component {
   }
 
   renderItem(d) {
-    if (!this.props.filters) return;
+    if (!d.diff || !this.props.filters) return;
     var show = true;
-    var filterCount = 0;
     var colors = new Set();
     var color = "#ffffff";
 
@@ -32,7 +31,6 @@ class DataDisplay extends Component {
         } else pass = f.comparison(d);
 
         if (f.checked) {
-          filterCount++;
           show = show && pass;
         }
 
@@ -55,19 +53,22 @@ class DataDisplay extends Component {
           <Typography
             variant="body1"
             component="li"
-            style={{ backgroundColor: (color || "#ffffff") + "44" }}
+            style={{ backgroundColor: (color || "#ffffff") + "55" }}
           >
             (<Link to={"/d/" + d.rev_id}>diff</Link>) -{" "}
             <strong>{d.title}</strong>
-            <em> by {d.username} </em>{" "}
-            <strong style={{ color: d.size >= 0 ? "green" : "red" }}>
+            <em>
+              {" "}
+              by <Link to={"/c/" + d.rev_id}>{d.username}</Link>
+            </em>{" "}
+            <strong style={{ color: d.size >= 0 ? "#009933" : "#ff0000" }}>
               ({d.size.toLocaleString("en-US", { signDisplay: "always" })})
             </strong>{" "}
             <span dangerouslySetInnerHTML={{ __html: d.comment }} />
           </Typography>
         </div>
       );
-    else return <li style={{ display: "none" }} />;
+    else return <div style={{ display: "none" }} />;
   }
 
   render() {
