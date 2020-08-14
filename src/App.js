@@ -7,6 +7,7 @@ import data_sheet from "./data/data-moreinfo.csv";
 import Diff from "./components/diff";
 import DataDisplay from "./components/dataDisplay";
 import Contribs from "./components/userContribs";
+import Hist from "./components/pageHist";
 import { ThemeProvider } from "@material-ui/styles";
 import Dot from "@material-ui/icons/FiberManualRecord";
 import Highlight from "@material-ui/icons/Colorize";
@@ -308,6 +309,17 @@ class App extends Component {
                 path="/c/:id"
                 render={({ match }) => (
                   <Contribs
+                    revision={data.find(
+                      (e) => e.rev_id === parseInt(match.params.id)
+                    )}
+                  />
+                )}
+              />
+
+              <Route
+                path="/h/:id"
+                render={({ match }) => (
+                  <Hist
                     revision={data.find(
                       (e) => e.rev_id === parseInt(match.params.id)
                     )}

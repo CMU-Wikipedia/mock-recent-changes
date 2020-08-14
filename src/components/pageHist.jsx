@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import { LinearProgress, Typography } from "@material-ui/core";
 
-class Contribs extends Component {
+class Hist extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,14 +20,15 @@ class Contribs extends Component {
       .get(
         cors +
           api +
-          "?action=query&list=usercontribs&ucuser=" +
-          this.props.revision.username +
-          "&ucstart=" +
+          "?action=query&titles=" +
+          this.props.revision.title +
+          "&prop=revisions&format=json&rvstart=" +
           this.props.revision.timestamp.toISOString() +
-          "&uclimit=500&format=json&ucprop=sizediff|title|timestamp|parsedcomment|ids"
+          "&rvprop=ids|timestamp|user|size|parsedcomment&rvlimit=500"
       )
       .then((res) => {
-        const arr = res.data.query.usercontribs;
+        const arr =
+          res.data.query.pages[Object.keys(res.data.query.pages)[0]].revisions;
         this.setState({ data: arr, loaded: true });
       });
   }
@@ -36,8 +37,8 @@ class Contribs extends Component {
     return (
       <div class="box">
         <Typography variant="h6" style={{ marginBottom: 20 }}>
-          Contributions made by{" "}
-          {this.props.revision ? this.props.revision.username : "user"}
+          Edit history of{" "}
+          {this.props.revision ? this.props.revision.title : "user"}
         </Typography>
         {this.state.data ? (
           this.state.data.map((d) => (
@@ -55,22 +56,9 @@ class Contribs extends Component {
                   day: "numeric",
                 })}
               </div>
-              <div
-                style={{
-                  color: d.sizediff >= 0 ? "#009933" : "#ff0000",
-                  fontWeight: "bold",
-                  width: 75,
-                }}
-              >
-                (
-                {d.sizediff.toLocaleString("en-US", {
-                  signDisplay: "always",
-                })}
-                )
-              </div>
               <div style={{ fontWeight: "bold", marginRight: 20 }}>
                 {" "}
-                {d.title}
+                {d.user}
               </div>
               <div
                 style={{ fontStyle: "italic" }}
@@ -86,4 +74,4 @@ class Contribs extends Component {
   }
 }
 
-export default Contribs;
+export default Hist;

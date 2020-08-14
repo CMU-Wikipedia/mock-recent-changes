@@ -55,7 +55,8 @@ class DataDisplay extends Component {
             component="li"
             style={{ backgroundColor: (color || "#ffffff") + "55" }}
           >
-            (<Link to={"/d/" + d.rev_id}>diff</Link>) -{" "}
+            (<Link to={"/d/" + d.rev_id}>diff</Link> |{" "}
+            <Link to={"/h/" + d.rev_id}>hist</Link>) -{" "}
             <strong>{d.title}</strong>
             <em>
               {" "}
