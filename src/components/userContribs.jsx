@@ -15,7 +15,6 @@ class Contribs extends Component {
     const cors = "https://cors-anywhere.herokuapp.com/";
     const api = "https://en.wikipedia.org/w/api.php";
     if (!this.props.revision || this.props.revision === undefined) return;
-    console.log(this.props.revision);
     axios
       .get(
         cors +
