@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/mock-recent-changes/static/css/main.419aa6bb.chunk.css",
-    "main.js": "/mock-recent-changes/static/js/main.b5598d64.chunk.js",
-    "main.js.map": "/mock-recent-changes/static/js/main.b5598d64.chunk.js.map",
+    "main.js": "/mock-recent-changes/static/js/main.900c7e64.chunk.js",
+    "main.js.map": "/mock-recent-changes/static/js/main.900c7e64.chunk.js.map",
     "runtime-main.js": "/mock-recent-changes/static/js/runtime-main.776d3229.js",
     "runtime-main.js.map": "/mock-recent-changes/static/js/runtime-main.776d3229.js.map",
     "static/js/2.964df5a8.chunk.js": "/mock-recent-changes/static/js/2.964df5a8.chunk.js",
     "static/js/2.964df5a8.chunk.js.map": "/mock-recent-changes/static/js/2.964df5a8.chunk.js.map",
     "index.html": "/mock-recent-changes/index.html",
-    "precache-manifest.8d8b047d9727dd3a118f8cf3fd8934e6.js": "/mock-recent-changes/precache-manifest.8d8b047d9727dd3a118f8cf3fd8934e6.js",
+    "precache-manifest.6548f29a6f0743dd1e21324dd37c66f6.js": "/mock-recent-changes/precache-manifest.6548f29a6f0743dd1e21324dd37c66f6.js",
     "service-worker.js": "/mock-recent-changes/service-worker.js",
     "static/css/main.419aa6bb.chunk.css.map": "/mock-recent-changes/static/css/main.419aa6bb.chunk.css.map",
     "static/js/2.964df5a8.chunk.js.LICENSE.txt": "/mock-recent-changes/static/js/2.964df5a8.chunk.js.LICENSE.txt",
@@ -18,6 +18,6 @@
     "static/js/runtime-main.776d3229.js",
     "static/js/2.964df5a8.chunk.js",
     "static/css/main.419aa6bb.chunk.css",
-    "static/js/main.b5598d64.chunk.js"
+    "static/js/main.900c7e64.chunk.js"
   ]
 }
