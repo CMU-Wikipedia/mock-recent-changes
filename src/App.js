@@ -28,13 +28,7 @@ import {
   MenuItem,
 } from "@material-ui/core";
 
-import {
-  BrowserRouter,
-  HashRouter,
-  Route,
-  Link,
-  Switch,
-} from "react-router-dom";
+import { Route, Link, Switch } from "react-router-dom";
 
 let theme = createMuiTheme({
   typography: {
@@ -279,127 +273,122 @@ class App extends Component {
     let data = this.state.data || [];
     let filters = this.state.filters || {};
     return (
-      <BrowserRouter basename={process.env.PUBLIC_URL + "/"}>
-        <ThemeProvider theme={theme}>
-          <div className="App">
-            <div
-              className="box"
-              style={{ marginTop: "-2em", borderTop: "none" }}
-            >
-              <Link to="/">
-                <Typography variant="subtitle1">Recent Changes</Typography>
-              </Link>
-            </div>
+      <ThemeProvider theme={theme}>
+        <div className="App">
+          <div className="box" style={{ marginTop: "-2em", borderTop: "none" }}>
+            <Link to="/">
+              <Typography variant="subtitle1">Recent Changes</Typography>
+            </Link>
+          </div>
 
-            <Switch>
-              {data && data !== undefined && (
-                <Route
-                  path="/d/:id"
-                  render={({ match }) => (
-                    <Diff
-                      revision={data.find(
-                        (e) => e.rev_id === parseInt(match.params.id)
-                      )}
-                    />
+          <Switch>
+            {data && data !== undefined && (
+              <Route
+                path="/d/:id"
+                render={({ match }) => (
+                  <Diff
+                    revision={data.find(
+                      (e) => e.rev_id === parseInt(match.params.id)
+                    )}
+                  />
+                )}
+              />
+            )}
+
+            <Route
+              path="/c/:id"
+              render={({ match }) => (
+                <Contribs
+                  revision={data.find(
+                    (e) => e.rev_id === parseInt(match.params.id)
                   )}
                 />
               )}
+            />
 
-              <Route
-                path="/c/:id"
-                render={({ match }) => (
-                  <Contribs
-                    revision={data.find(
-                      (e) => e.rev_id === parseInt(match.params.id)
-                    )}
-                  />
-                )}
-              />
+            <Route
+              path="/h/:id"
+              render={({ match }) => (
+                <Hist
+                  revision={data.find(
+                    (e) => e.rev_id === parseInt(match.params.id)
+                  )}
+                />
+              )}
+            />
 
-              <Route
-                path="/h/:id"
-                render={({ match }) => (
-                  <Hist
-                    revision={data.find(
-                      (e) => e.rev_id === parseInt(match.params.id)
-                    )}
-                  />
-                )}
-              />
-
-              <Route path="/">
-                {this.state.thresholdsFound ? (
-                  <FormControl className="filter">
-                    {Object.keys(filters).map((model) => (
-                      <div className="modelGroup box">
-                        <FormLabel>
-                          <Typography variant="subtitle2">
-                            {this.state.titles[model]}
-                          </Typography>
-                        </FormLabel>
-                        <FormGroup>
-                          {Object.keys(filters[model]).map((range) => (
-                            <div className="filterItem">
-                              <FormControlLabel
-                                className="filterBox"
-                                control={
-                                  <Checkbox
-                                    onClick={() => this.toggle(model, range)}
-                                    value={filters[model][range].checked}
-                                  />
-                                }
-                                label={
-                                  <div>
-                                    <Typography variant="h6">
-                                      {filters[model][range].title}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                      {filters[model][range].description}
-                                    </Typography>
-                                  </div>
-                                }
-                              />
-                              <Select
-                                className="highlightBox"
-                                value={filters[model][range].highlight}
-                                onChange={(event) =>
-                                  this.changeColor(model, range, event)
-                                }
-                                displayEmpty="true"
-                                renderValue={(value) => {
-                                  if (value)
-                                    return <Dot style={{ fill: value }} />;
-                                  else return <Highlight />;
-                                }}
-                              >
-                                {[
-                                  null,
-                                  "#495cd0",
-                                  "#43b286",
-                                  "#f6d00e",
-                                  "#f06d1f",
-                                  "#ce2d37",
-                                ].map((color) => (
-                                  <MenuItem value={color}>
-                                    <Dot style={{ fill: color || "#fff" }} />
-                                  </MenuItem>
-                                ))}
-                              </Select>
-                            </div>
-                          ))}
-                        </FormGroup>
-                      </div>
-                    ))}
-                  </FormControl>
-                ) : (
-                  <LinearProgress />
-                )}
-                <DataDisplay data={data} filters={filters} />
-              </Route>
-            </Switch>
-          </div>
-        </ThemeProvider>
-      </BrowserRouter>
+            <Route path="/">
+              {this.state.thresholdsFound ? (
+                <FormControl className="filter">
+                  {Object.keys(filters).map((model) => (
+                    <div className="modelGroup box">
+                      <FormLabel>
+                        <Typography variant="subtitle2">
+                          {this.state.titles[model]}
+                        </Typography>
+                      </FormLabel>
+                      <FormGroup>
+                        {Object.keys(filters[model]).map((range) => (
+                          <div className="filterItem">
+                            <FormControlLabel
+                              className="filterBox"
+                              control={
+                                <Checkbox
+                                  onClick={() => this.toggle(model, range)}
+                                  value={filters[model][range].checked}
+                                />
+                              }
+                              label={
+                                <div>
+                                  <Typography variant="h6">
+                                    {filters[model][range].title}
+                                  </Typography>
+                                  <Typography variant="body2">
+                                    {filters[model][range].description}
+                                  </Typography>
+                                </div>
+                              }
+                            />
+                            <Select
+                              className="highlightBox"
+                              value={filters[model][range].highlight}
+                              onChange={(event) =>
+                                this.changeColor(model, range, event)
+                              }
+                              displayEmpty="true"
+                              renderValue={(value) => {
+                                if (value)
+                                  return <Dot style={{ fill: value }} />;
+                                else return <Highlight />;
+                              }}
+                            >
+                              {[
+                                null,
+                                "#495cd0",
+                                "#43b286",
+                                "#f6d00e",
+                                "#f06d1f",
+                                "#ce2d37",
+                              ].map((color) => (
+                                <MenuItem value={color}>
+                                  <Dot style={{ fill: color || "#fff" }} />
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </div>
+                        ))}
+                      </FormGroup>
+                    </div>
+                  ))}
+                </FormControl>
+              ) : (
+                <LinearProgress />
+              )}
+              <DataDisplay data={data} filters={filters} />
+            </Route>
+          </Switch>
+        </div>
+      </ThemeProvider>
     );
   }
 }
