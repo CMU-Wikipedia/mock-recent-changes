@@ -1,23 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "23d60152071086dc23c484c5cc9f8eb0",
+    "revision": "f32abe6357e99d4ce829f4cca09ceff5",
     "url": "/mock-recent-changes/index.html"
   },
   {
-    "revision": "7c69bfd84d68b7b54ee4",
-    "url": "/mock-recent-changes/static/css/main.11ecf1be.chunk.css"
+    "revision": "a462810c111c0c936153",
+    "url": "/mock-recent-changes/static/css/main.419aa6bb.chunk.css"
   },
   {
-    "revision": "bdfcb3d8063d9f4f267b",
-    "url": "/mock-recent-changes/static/js/2.c049de6b.chunk.js"
+    "revision": "24def32f5de3950822db",
+    "url": "/mock-recent-changes/static/js/2.36d87c04.chunk.js"
   },
   {
     "revision": "0749163b59fbee32225059cb60c18af6",
-    "url": "/mock-recent-changes/static/js/2.c049de6b.chunk.js.LICENSE.txt"
+    "url": "/mock-recent-changes/static/js/2.36d87c04.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "7c69bfd84d68b7b54ee4",
-    "url": "/mock-recent-changes/static/js/main.d214d4b2.chunk.js"
+    "revision": "a462810c111c0c936153",
+    "url": "/mock-recent-changes/static/js/main.f3491492.chunk.js"
   },
   {
     "revision": "5bf0f6acebb86ca2a9c0",
