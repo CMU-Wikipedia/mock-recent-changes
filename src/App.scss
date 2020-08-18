@@ -162,12 +162,12 @@ a {
   }
 }
 
-.filter.MuiFormControl-root {
+.filter {
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
+  justify-content: space-around;
 
-  .modelGroup {
+  .MuiFormControl-root.modelGroup {
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
@@ -180,6 +180,7 @@ a {
 
       .filterBox {
         flex-grow: 1;
+        margin-right: 18px;
       }
 
       .highlightBox {
