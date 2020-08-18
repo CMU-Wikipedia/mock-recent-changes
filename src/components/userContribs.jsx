@@ -33,7 +33,7 @@ class Contribs extends Component {
 
   render() {
     return (
-      <div class="box">
+      <div className="box">
         <Typography variant="h6" style={{ marginBottom: 20 }}>
           Contributions made by{" "}
           {this.props.revision ? this.props.revision.username : "user"}

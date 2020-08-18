@@ -4,10 +4,6 @@ import "../App.scss";
 import { LinearProgress } from "@material-ui/core";
 
 class Diff extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   ValidateIPaddress(ipaddress) {
     return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
       ipaddress
@@ -20,8 +16,8 @@ class Diff extends Component {
       "<tr class='header'><td class='before' colspan='2'>Before</td><td class='after' colspan='2'>After</td></tr>";
     if (d === undefined) return <LinearProgress />;
     return (
-      <div class="diff">
-        <div class="box">
+      <div className="diff">
+        <div className="box">
           <strong>Revision ID: </strong>
           <a
             href={
@@ -29,10 +25,11 @@ class Diff extends Component {
               d.rev_id
             }
             target="_blank"
+            rel="noopener noreferrer"
           >
             {d.rev_id}
           </a>
-          <div class="row">
+          <div className="row">
             <div>
               <strong>Article Title: </strong>
               {d.title}
