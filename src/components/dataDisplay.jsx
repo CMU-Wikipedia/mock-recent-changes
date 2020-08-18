@@ -60,18 +60,29 @@ class DataDisplay extends Component {
           >
             (
             <Link
-              //   target="_blank"
-              //   rel="noopener noreferrer"
+              target="_blank"
+              rel="noopener noreferrer"
               to={this.props.variant + "/d/" + d.rev_id}
             >
               diff
             </Link>{" "}
-            | <Link to={this.props.variant + "/h/" + d.rev_id}>hist</Link>) -{" "}
-            <strong>{d.title}</strong>
+            |{" "}
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              to={this.props.variant + "/h/" + d.rev_id}
+            >
+              hist
+            </Link>
+            ) - <strong>{d.title}</strong>
             <em>
               {" "}
               by{" "}
-              <Link to={this.props.variant + "/c/" + d.rev_id}>
+              <Link
+                target="_blank"
+                rel="noopener noreferrer"
+                to={this.props.variant + "/c/" + d.rev_id}
+              >
                 {d.username}
               </Link>
             </em>{" "}
