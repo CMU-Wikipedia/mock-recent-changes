@@ -32,6 +32,7 @@ import {
   HashRouter as Router,
   useRouteMatch,
 } from "react-router-dom";
+import PrivacyPolicy from "./components/privacyPolicy";
 
 let theme = createMuiTheme({
   typography: {
@@ -285,6 +286,11 @@ class Main extends Component {
                   )}
                 />
               )}
+            />
+
+            <Route
+              path={"/" + variant + "/privacyPolicy"}
+              component={PrivacyPolicy}
             />
 
             <Route>
