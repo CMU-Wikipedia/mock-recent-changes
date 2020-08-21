@@ -75,6 +75,7 @@ let theme = createMuiTheme({
       fontWeight: "bold",
       textTransform: "none",
       textAlign: "left",
+      textDecoration: "none",
     },
   },
 });
@@ -288,10 +289,7 @@ class Main extends Component {
               )}
             />
 
-            <Route
-              path={"/" + variant + "/privacyPolicy"}
-              component={PrivacyPolicy}
-            />
+            <Route path="/privacy" component={PrivacyPolicy} />
 
             <Route>
               {this.state.thresholdsFound ? (
@@ -359,6 +357,10 @@ class Main extends Component {
               <DataDisplay data={data} filters={filters} variant={variant} />
             </Route>
           </Switch>
+
+          <Link to="/privacy">
+            <Typography variant="h5">Privacy Policy</Typography>
+          </Link>
         </div>
       </ThemeProvider>
     ) : (
