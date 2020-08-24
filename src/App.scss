@@ -127,6 +127,16 @@ a {
       font-weight: bold;
     }
   }
+
+  .MuiButton-root.MuiButtonBase-root {
+    background-color: #c57619;
+    font-style: normal;
+    color: white;
+
+    * {
+      margin: 0px;
+    }
+  }
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
