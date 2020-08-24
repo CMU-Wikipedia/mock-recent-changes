@@ -32,7 +32,6 @@ import {
   HashRouter as Router,
   useRouteMatch,
 } from "react-router-dom";
-import PrivacyPolicy from "./components/privacyPolicy";
 
 let theme = createMuiTheme({
   typography: {
@@ -290,8 +289,6 @@ class Main extends Component {
               )}
             />
 
-            <Route path="/privacy" component={PrivacyPolicy} />
-
             <Route>
               {this.state.thresholdsFound ? (
                 <div className="filter box" style={{ paddingTop: 0 }}>
@@ -358,10 +355,6 @@ class Main extends Component {
               <DataDisplay data={data} filters={filters} variant={variant} />
             </Route>
           </Switch>
-
-          <Link to="/privacy">
-            <Typography variant="h5">Privacy Policy</Typography>
-          </Link>
         </div>
       </ThemeProvider>
     ) : (
