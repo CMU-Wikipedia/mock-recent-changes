@@ -6,16 +6,32 @@ import data_sheet from "./data/data-moreinfo.csv";
 import Main from "./content";
 import { LinearProgress } from "@material-ui/core";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import { GoogleSpreadsheet, GoogleSpreadsheetRow } from "google-spreadsheet";
+import * as creds from "./data/mrc-service-acct-key.json";
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: null,
+      reverts: null,
     };
   }
 
+  async loadGSheet() {
+    const doc = new GoogleSpreadsheet(
+      "1JPCU9fSQMh6s6TO-nSLnUzR2w9H-dwFBs5pXlFtOF4M"
+    );
+    await doc.useServiceAccountAuth(
+      require("./data/mrc-service-acct-key.json")
+    );
+    await doc.loadInfo();
+    console.log("Loaded " + doc.title);
+    this.setState({ reverts: doc });
+  }
+
   componentDidMount() {
+    this.loadGSheet();
     d3.csv(data_sheet, (d) => {
       return {
         confidence_faith: +d.confidence_faith,
@@ -31,12 +47,19 @@ class App extends Component {
         size: +d.size,
         comment: d.parsed_comment,
         diff: d.diff,
+        reverted: false,
       };
     }).then((data) => this.setState({ data: data.slice(0, 2000) }));
   }
 
   getContent(variant = "") {
-    return <Main data={this.state.data} variant={variant} />;
+    return (
+      <Main
+        data={this.state.data}
+        reverts={this.state.reverts}
+        variant={variant}
+      />
+    );
   }
 
   render() {

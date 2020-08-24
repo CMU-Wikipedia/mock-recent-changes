@@ -44,9 +44,15 @@ class DataDisplay extends Component {
       }
     }
 
+    const deco = d.reverted ? "line-through" : "none";
+
     if (show)
       return (
-        <div className="editLine" key={d.rev_id}>
+        <div
+          className="editLine"
+          key={d.rev_id}
+          style={{ textDecoration: deco }}
+        >
           <div className="dots">
             {Array.from(colors).map((c) => (
               <Dot style={{ fill: c, height: 10, width: 10 }} />

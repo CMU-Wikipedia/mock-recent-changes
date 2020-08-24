@@ -262,6 +262,7 @@ class Main extends Component {
                     revision={data.find(
                       (e) => e.rev_id === parseInt(match.params.id)
                     )}
+                    doc={this.props.reverts}
                   />
                 )}
               />

@@ -1,13 +1,53 @@
 import React, { Component } from "react";
 import "../App.css";
 import "../App.scss";
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress, Button } from "@material-ui/core";
 
 class Diff extends Component {
+  constructor(props) {
+    super(props);
+    this.onRevert = this.onRevert.bind(this);
+    this.state = {
+      revRow: null,
+    };
+  }
+
   ValidateIPaddress(ipaddress) {
     return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
       ipaddress
     );
+  }
+
+  async onRevert() {
+    console.log("Reverting");
+    const sheet = this.props.doc.sheetsByIndex[0];
+    const d = this.props.revision;
+    const date = new Date();
+    const row = await sheet.addRow({
+      id: d.rev_id,
+      date: date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
+      time: date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+      }),
+      damagingLabel: d.label_damage ? "TRUE" : "FALSE",
+      damagingScore: d.confidence_damage,
+      goodfaithLabel: d.label_faith ? "TRUE" : "FALSE",
+      goodfaithScore: d.confidence_faith,
+    });
+    await row.save({ raw: true });
+    this.props.revision.reverted = true;
+    this.setState({ revRow: row });
+  }
+
+  async undoRevert() {
+    this.props.revision.reverted = false;
+    await this.state.revRow.delete();
+    this.setState({ revRow: null });
   }
 
   render() {
@@ -51,6 +91,11 @@ class Diff extends Component {
               <strong>Comment from Editor:</strong>
               <p dangerouslySetInnerHTML={{ __html: d.comment }} />
             </div>
+          )}
+          {d.reverted ? (
+            <Button onClick={() => this.undoRevert()}>Undo Revert</Button>
+          ) : (
+            <Button onClick={() => this.onRevert()}>Revert</Button>
           )}
         </div>
 
