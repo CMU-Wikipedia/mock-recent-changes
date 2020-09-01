@@ -1,3 +1,31 @@
+# Welcome to Mock Recent Changes!
+
+This was a tool created by [@ShaurGaur](https://github.com/ShaurGaur) for a Wikipedia based study from Carnegie Mellon University ([@CMU-Wikipedia](https://github.com/CMU-Wikipedia)).
+
+## About the Tool
+
+This is a mock version of Wikipedia's [Recent Changes](https://en.wikipedia.org/wiki/Special:RecentChanges?hidebots=1&hidecategorization=1&hideWikibase=1&limit=50&days=7&urlversion=2) tool. It is functionally similar, except that it uses a labeled dataset instead of live edits. In addition, while most of the edit features are included (i.e. differences, page edit history, and user contributions, comments), talk pages and edit dates are not shown.
+
+There are three dimensions of filtering: edit quality, edit intent, and user experience. Quality and intent filters, corresponding to the ORES API's `damaging` and `goodfaith` models respectively, are based on the default configuration as seen in the [ORES/RCFilters MediaWiki page](https://www.mediawiki.org/wiki/ORES/RCFilters#Threshold_configuration_in_the_ORES_extension).
+
+## Configurations
+
+The root URL of the website is https://cmu-wikipedia.github.io/mock-recent-changes/#/.
+
+However, you can add a configuration after the `#/` to alter what the user can see. Be aware that you will have to refresh the page using `Ctrl+R` in your browser window when changing between these.
+
+**The variants are:**
+
+- `<URL>/noflags` - This will only display checkbox filters for the user.
+- `<URL>/nocheck` - This will only display color highlights for the user.
+- `<URL>/main` or `<URL>` - (default) Displays both filters and highlights.
+
+## Data Collection
+
+This tool **does not** collect any personal data. When the user enters a Diff page, they can "revert" an edit they see as damaging or bad faith. A timestamp (along with `damaging` and `goodfaith` scores for an edit) will be sent to a [Google Sheet](https://docs.google.com/spreadsheets/d/e/2PACX-1vTAolQ1vu-yZrBodbZItzYMC9uqX3vCfjlsA_0N7GtdbIuK_uPUo1S-T3xPIN_zW2sEDo6to6rFrtvz/pubhtml). This data can be analyzed for experimental use.
+
+# Development Commands
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

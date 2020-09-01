@@ -1,9 +1,7 @@
 import React, { Component } from "react";
-import * as d3 from "d3";
 import axios from "axios";
 import "./App.css";
 import "./App.scss";
-import data_sheet from "./data/data-moreinfo.csv";
 import Diff from "./components/diff";
 import DataDisplay from "./components/dataDisplay";
 import Contribs from "./components/userContribs";
@@ -25,13 +23,7 @@ import {
   MenuItem,
 } from "@material-ui/core";
 
-import {
-  Route,
-  Link,
-  Switch,
-  HashRouter as Router,
-  useRouteMatch,
-} from "react-router-dom";
+import { Route, Link, Switch } from "react-router-dom";
 
 let theme = createMuiTheme({
   typography: {

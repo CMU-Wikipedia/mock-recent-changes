@@ -4,10 +4,8 @@ import "./App.css";
 import "./App.scss";
 import data_sheet from "./data/data-moreinfo.csv";
 import Main from "./content";
-import { LinearProgress } from "@material-ui/core";
-import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
-import { GoogleSpreadsheet, GoogleSpreadsheetRow } from "google-spreadsheet";
-import * as creds from "./data/mrc-service-acct-key.json";
+import { Route, Switch } from "react-router-dom";
+import { GoogleSpreadsheet } from "google-spreadsheet";
 
 class App extends Component {
   constructor(props) {
